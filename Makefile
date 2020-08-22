@@ -1,21 +1,13 @@
-OBJS	 = FCFS.o RR.o SJF.o
-SOURCE	 = FCFS.c RR.c SJF.c
-OUT	     = Sched
-CC	     = gcc
-FLAGS	 = -g -c -Wall -Werror
+all: FCFS RR SJF
 
-all: $(OBJS)
-	$(CC) -g $(OBJS) -o $(OUT) $(LFLAGS)
+FCFS:
+	gcc -g -Wall -Werror -o FCFS FCFS.c
 
-FCFS.o: FCFS.c
-	$(CC) $(FLAGS) FCFS.c
+RR:
+	gcc -g -Wall -Werror -o RR RR.c
 
-RR.o: RR.c
-	$(CC) $(FLAGS) RR.c
-
-SJF.o: SJF.c
-	$(CC) $(FLAGS) SJF.c
-
+SJF:
+	gcc -g -Wall -Werror -o SJF SJF.c
 
 clean:
-	rm -f $(OBJS) $(OUT)
+	rm FCFS RR SJF
