@@ -1,13 +1,13 @@
 all: FCFS RR SJF
 
-FCFS:
-	gcc -g -Wall -Werror -o FCFS FCFS.c
+FCFS: FCFS.o
+	gcc -g -Wall -Werror -O -o FCFS FCFS.c
 
-RR:
-	gcc -g -Wall -Werror -o RR RR.c
+RR: RR.o
+	gcc -g -Wall -Werror -O -o RR RR.c
 
-SJF:
-	gcc -g -Wall -Werror -o SJF SJF.c
+SJF: SJF.o
+	gcc -g -Wall -Werror -O -o SJF SJF.c
 
 clean:
-	rm FCFS RR SJF
+	rm -f FCFS RR SJF *.o
