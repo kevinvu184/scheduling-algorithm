@@ -3,11 +3,11 @@
 
 #define NUMBER_OF_PROCESS 200
 
+void scan_from_file(FILE *in, int process_id[], int burst_time[], int arrival_time[]);
 void print_to_file(FILE *out, int process_id[], int burst_time[], int arrival_time[]);
 
 int main()
 {
-   int a, b, c;
    int process_id[NUMBER_OF_PROCESS] = {0}, burst_time[NUMBER_OF_PROCESS] = {0}, arrival_time[NUMBER_OF_PROCESS] = {0};
    // int turnaround_time[200], wait_time[200];
 
@@ -25,6 +25,18 @@ int main()
       exit(1);
    }
 
+   scan_from_file(in, process_id, burst_time, arrival_time);
+   print_to_file(out, process_id, burst_time, arrival_time);
+
+   fclose(in);
+   fclose(out);
+   return 0;
+}
+
+void scan_from_file(FILE *in, int process_id[], int burst_time[], int arrival_time[])
+{
+   int a, b, c;
+
    int i = 0;
    while (fscanf(in, "%d %d %d", &a, &b, &c) != -1)
    {
@@ -33,12 +45,6 @@ int main()
       arrival_time[i] = c;
       i++;
    }
-
-   print_to_file(out, process_id, burst_time, arrival_time);
-
-   fclose(in);
-   fclose(out);
-   return 0;
 }
 
 void print_to_file(FILE *out, int process_id[], int burst_time[], int arrival_time[])
@@ -47,6 +53,6 @@ void print_to_file(FILE *out, int process_id[], int burst_time[], int arrival_ti
    int i;
    for (i = 0; i < NUMBER_OF_PROCESS; i++)
    {
-      fprintf(out, "%d %d %d\n", process_id[j], burst_time[j], arrival_time[j]);
+      fprintf(out, "%d %d %d\n", process_id[i], burst_time[i], arrival_time[i]);
    }
 }
