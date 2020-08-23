@@ -10,4 +10,4 @@ SJF: SJF.o
 	gcc -g -Wall -Werror -O -o SJF SJF.c
 
 clean:
-	rm -f FCFS RR SJF *.o
+	rm -f FCFS RR SJF *.o *.out

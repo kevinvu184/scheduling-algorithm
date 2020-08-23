@@ -1,30 +1,52 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define NUMBER_OF_PROCESS 200
+
+void print_to_file(FILE *out, int process_id[], int burst_time[], int arrival_time[]);
+
 int main()
 {
    int a, b, c;
-   
+   int process_id[NUMBER_OF_PROCESS] = {0}, burst_time[NUMBER_OF_PROCESS] = {0}, arrival_time[NUMBER_OF_PROCESS] = {0};
+   // int turnaround_time[200], wait_time[200];
+
    FILE *in;
    if ((in = fopen("processes", "r")) == NULL)
    {
-      printf("Error! opening file");
+      printf("Error - Opening processes file.");
       exit(1);
    }
 
    FILE *out;
    if ((out = fopen("FCFS.out", "w")) == NULL)
    {
-      printf("Error! opening file");
+      printf("Error - Opening out file.");
       exit(1);
    }
 
+   int i = 0;
    while (fscanf(in, "%d %d %d", &a, &b, &c) != -1)
    {
-      fprintf(out, "%d %d %d\n", a, b, c);
+      process_id[i] = a;
+      burst_time[i] = b;
+      arrival_time[i] = c;
+      i++;
    }
+
+   print_to_file(out, process_id, burst_time, arrival_time);
 
    fclose(in);
    fclose(out);
    return 0;
+}
+
+void print_to_file(FILE *out, int process_id[], int burst_time[], int arrival_time[])
+{
+   fprintf(out, "%s %s %s %s %s\n", "PID", "B", "A", "W", "T");
+   int i;
+   for (i = 0; i < NUMBER_OF_PROCESS; i++)
+   {
+      fprintf(out, "%d %d %d\n", process_id[j], burst_time[j], arrival_time[j]);
+   }
 }
