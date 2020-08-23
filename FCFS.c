@@ -4,17 +4,27 @@
 int main()
 {
    int a, b, c;
-   FILE *file;
-
-   if ((file = fopen("processes", "r")) == NULL)
+   
+   FILE *in;
+   if ((in = fopen("processes", "r")) == NULL)
    {
       printf("Error! opening file");
       exit(1);
    }
 
-   while (fscanf(file, "%d %d %d", &a, &b, &c) != -1)
+   FILE *out;
+   if ((out = fopen("FCFS.out", "w")) == NULL)
    {
-      printf("%d %d %d\n", a, b, c);
+      printf("Error! opening file");
+      exit(1);
    }
+
+   while (fscanf(in, "%d %d %d", &a, &b, &c) != -1)
+   {
+      fprintf(out, "%d %d %d\n", a, b, c);
+   }
+
+   fclose(in);
+   fclose(out);
    return 0;
 }

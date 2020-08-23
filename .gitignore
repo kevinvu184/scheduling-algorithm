@@ -2,3 +2,4 @@ FCFS
 SJF
 RR
 *.o
+*.out
