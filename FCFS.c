@@ -53,6 +53,9 @@ int main()
       p[i].flag = true;
 
       done = isDone(p);
+      if (done) {
+         break;
+      }
       i++;
    }
 
