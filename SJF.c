@@ -103,7 +103,7 @@ void scan_from_file(FILE *in, P p[])
 
 void print_to_file(FILE *out, P p[])
 {
-   fprintf(out, "%s %s %s %s %s %s %s\n", "PID", "B", "A", "C", "T", "W", "D");
+   fprintf(out, "%s %s %s %s %s %s %s\n", "I", "B", "A", "C", "T", "W", "D");
 
    int i;
    for (i = 0; i < NUMBER_OF_PROCESS; i++)

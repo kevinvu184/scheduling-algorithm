@@ -1,8 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <math.h>
 
 #define NUMBER_OF_PROCESS 200
+#define TIME_QUANTUM 2
+#define SWITCH_TIME 0.1
 
 typedef struct P
 {
@@ -11,6 +14,7 @@ typedef struct P
    int at;
 
    int pri;
+   int sli;
 
    bool flag;
 
@@ -54,7 +58,8 @@ int main()
       p[i].flag = true;
 
       done = isDone(p);
-      if (done) {
+      if (done)
+      {
          break;
       }
 
@@ -79,7 +84,8 @@ void scan_from_file(FILE *in, P p[])
       p[i].bt = b;
       p[i].at = c;
       p[i].pri = d;
-
+      
+      p[i].sli = (int) ceil( (float) p[i].bt / TIME_QUANTUM);
       p[i].flag = false;
 
       p[i].ct = 0;
@@ -92,12 +98,12 @@ void scan_from_file(FILE *in, P p[])
 
 void print_to_file(FILE *out, P p[])
 {
-   fprintf(out, "%s %s %s %s %s %s %s %s\n", "PID", "B", "A", "P", "C", "T", "W", "D");
+   fprintf(out, "%s %s %s %s %s %s %s %s %s\n", "I", "B", "A", "P", "S", "C", "T", "W", "D");
 
    int i;
    for (i = 0; i < NUMBER_OF_PROCESS; i++)
    {
-      fprintf(out, "%d %d %d %d %d %d %d %s\n", p[i].id, p[i].bt, p[i].at, p[i].pri, p[i].ct, p[i].tt, p[i].wt, p[i].flag ? "true" : "false");
+      fprintf(out, "%d %d %d %d %d %d %d %d %s\n", p[i].id, p[i].bt, p[i].at, p[i].pri, p[i].sli, p[i].ct, p[i].tt, p[i].wt, p[i].flag ? "true" : "false");
    }
 }
 
