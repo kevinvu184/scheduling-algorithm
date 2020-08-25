@@ -41,7 +41,6 @@ int main()
    }
    scan_from_file(in, p);
 
-   // SJF Algorithm
    int cct = 0;
    int i = 0;
    bool done = false;

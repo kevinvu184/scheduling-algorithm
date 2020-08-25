@@ -40,7 +40,6 @@ int main()
    }
    scan_from_file(in, p);
 
-   // FCFS Algorithm
    int cct = 0;
    int i = 0;
    bool done = false;
