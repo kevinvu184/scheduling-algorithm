@@ -3,3 +3,4 @@ SJF
 RR
 *.o
 .nfs*
+*.out
