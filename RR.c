@@ -15,9 +15,7 @@ typedef struct P {
     int bt;
     int at;
 
-    int pri;
     int sli;
-
     bool flag;
 
     int ct;
@@ -35,7 +33,7 @@ int main() {
 
     // Open input - output file
     FILE * in ;
-    if (( in = fopen("processes-with-priority", "r")) == NULL) {
+    if (( in = fopen("processes", "r")) == NULL) {
         printf("Error - Opening p file.");
         exit(1);
     }
@@ -72,14 +70,13 @@ int main() {
 }
 
 void scan_from_file(FILE * in , P p[]) {
-    int a, b, c, d;
+    int a, b, c;
 
     int i = 0;
-    while (fscanf( in , "%d %d %d %d", & a, & b, & c, & d) != -1) {
+    while (fscanf( in , "%d %d %d", & a, & b, & c) != -1) {
         p[i].id = a;
         p[i].bt = b;
         p[i].at = c;
-        p[i].pri = d;
 
         p[i].sli = (int) ceil((float) p[i].bt / TIME_QUANTUM);
         p[i].flag = false;
@@ -93,11 +90,11 @@ void scan_from_file(FILE * in , P p[]) {
 }
 
 void print_to_file(FILE * out, P p[]) {
-    fprintf(out, "%s %s %s %s %s %s %s %s %s\n", "I", "B", "A", "P", "S", "C", "T", "W", "D");
+    fprintf(out, "%s %s %s %s %s %s %s %s\n", "I", "B", "A", "S", "C", "T", "W", "D");
 
     int i;
     for (i = 0; i < NUMBER_OF_PROCESS; i++) {
-        fprintf(out, "%d %d %d %d %d %d %d %d %s\n", p[i].id, p[i].bt, p[i].at, p[i].pri, p[i].sli, p[i].ct, p[i].tt, p[i].wt, p[i].flag ? "true" : "false");
+        fprintf(out, "%d %d %d %d %d %d %d %s\n", p[i].id, p[i].bt, p[i].at, p[i].sli, p[i].ct, p[i].tt, p[i].wt, p[i].flag ? "true" : "false");
     }
 }
 
