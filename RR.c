@@ -8,7 +8,8 @@
 #define TIME_QUANTUM 2
 #define SWITCH_TIME 0.1
 
-typedef struct P {
+typedef struct P
+{
     int id;
     int bt;
     int at;
@@ -19,41 +20,45 @@ typedef struct P {
     int ct;
     int tt;
     int wt;
-}
-P;
+} P;
 
-typedef struct node {
+typedef struct node
+{
     P p;
     struct node *next;
 } node;
 
-void scan_from_file(FILE * in , P p[]);
-void print_to_file(FILE * out, P p[]);
+void scan_from_file(FILE *in, P p[]);
+void print_to_file(FILE *out, P p[]);
 int isDone(P p[]);
 int range(int cct, P p[]);
 void enqueue(node **head, P p);
-void dequeue(node **head);
+P dequeue(node **head);
 
-int main() {
+int main()
+{
     P p[NUMBER_OF_PROCESS];
 
     // Open input - output file
-    FILE * in ;
-    if (( in = fopen("processes", "r")) == NULL) {
+    FILE *in;
+    if ((in = fopen("processes", "r")) == NULL)
+    {
         printf("Error - Opening p file.");
         exit(1);
     }
-    FILE * out;
-    if ((out = fopen("RR.out", "w")) == NULL) {
+    FILE *out;
+    if ((out = fopen("RR.out", "w")) == NULL)
+    {
         printf("Error - Opening out file.");
         exit(1);
     }
-    scan_from_file( in , p);
+    scan_from_file(in, p);
 
     int cct = 0;
     int i = 0;
     int done = 0;
-    while (!done) {
+    while (!done)
+    {
         cct += p[i].bt;
         p[i].ct += cct;
         p[i].tt = p[i].ct - p[i].at;
@@ -61,7 +66,8 @@ int main() {
         p[i].flag = 1;
 
         done = isDone(p);
-        if (done) {
+        if (done)
+        {
             break;
         }
         i++;
@@ -69,21 +75,23 @@ int main() {
 
     print_to_file(out, p);
     // Close input - output file
-    fclose( in );
+    fclose(in);
     fclose(out);
     return 0;
 }
 
-void scan_from_file(FILE * in , P p[]) {
+void scan_from_file(FILE *in, P p[])
+{
     int a, b, c;
 
     int i = 0;
-    while (fscanf( in , "%d %d %d", & a, & b, & c) != -1) {
+    while (fscanf(in, "%d %d %d", &a, &b, &c) != -1)
+    {
         p[i].id = a;
         p[i].bt = b;
         p[i].at = c;
 
-        p[i].sli = (int) ceil((float) p[i].bt / TIME_QUANTUM);
+        p[i].sli = (int)ceil((float)p[i].bt / TIME_QUANTUM);
         p[i].flag = 0;
 
         p[i].ct = 0;
@@ -94,19 +102,24 @@ void scan_from_file(FILE * in , P p[]) {
     }
 }
 
-void print_to_file(FILE * out, P p[]) {
+void print_to_file(FILE *out, P p[])
+{
     fprintf(out, "%s %s %s %s %s %s %s %s\n", "I", "B", "A", "S", "C", "T", "W", "D");
 
     int i;
-    for (i = 0; i < NUMBER_OF_PROCESS; i++) {
+    for (i = 0; i < NUMBER_OF_PROCESS; i++)
+    {
         fprintf(out, "%d %d %d %d %d %d %d %d\n", p[i].id, p[i].bt, p[i].at, p[i].sli, p[i].ct, p[i].tt, p[i].wt, p[i].flag);
     }
 }
 
-int isDone(P p[]) {
+int isDone(P p[])
+{
     int i = 0;
-    while (i < NUMBER_OF_PROCESS) {
-        if (p[i].flag == 0) {
+    while (i < NUMBER_OF_PROCESS)
+    {
+        if (p[i].flag == 0)
+        {
             return 0;
         }
         i++;
@@ -114,33 +127,43 @@ int isDone(P p[]) {
     return 1;
 }
 
-int range(int cct, P p[]) {
+int range(int cct, P p[])
+{
     int j = 0;
-    while (cct > p[j].at) {
+    while (cct > p[j].at)
+    {
         j++;
     }
     return j - 1;
 }
 
-void enqueue(node **head, P p) {
+void enqueue(node **head, P p)
+{
     node *new = malloc(sizeof(node));
-    if (!new) return;
+    if (!new)
+        return;
     new->p = p;
     new->next = *head;
     *head = new;
 }
 
-void dequeue(node **head) {
+P dequeue(node **head)
+{
     node *current, *prev = NULL;
-    if (*head == NULL) return;
+    P p = {-1, -1, -1, -1, -1, -1, -1, -1};
+    if (*head == NULL)
+        return p;
     current = *head;
-    while (current->next != NULL) {
+    while (current->next != NULL)
+    {
         prev = current;
         current = current->next;
     }
+    p = current->p;
     free(current);
     if (prev)
         prev->next = NULL;
     else
         *head = NULL;
+    return p;
 }
