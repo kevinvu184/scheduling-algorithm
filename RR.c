@@ -22,9 +22,17 @@ typedef struct P {
 }
 P;
 
+typedef struct node {
+    P p;
+    struct node *next;
+} node;
+
 void scan_from_file(FILE * in , P p[]);
 void print_to_file(FILE * out, P p[]);
 int isDone(P p[]);
+int range(int cct, P p[]);
+void enqueue(node **head, P p);
+void dequeue(node **head);
 
 int main() {
     P p[NUMBER_OF_PROCESS];
@@ -104,4 +112,35 @@ int isDone(P p[]) {
         i++;
     }
     return 1;
+}
+
+int range(int cct, P p[]) {
+    int j = 0;
+    while (cct > p[j].at) {
+        j++;
+    }
+    return j - 1;
+}
+
+void enqueue(node **head, P p) {
+    node *new = malloc(sizeof(node));
+    if (!new) return;
+    new->p = p;
+    new->next = *head;
+    *head = new;
+}
+
+void dequeue(node **head) {
+    node *current, *prev = NULL;
+    if (*head == NULL) return;
+    current = *head;
+    while (current->next != NULL) {
+        prev = current;
+        current = current->next;
+    }
+    free(current);
+    if (prev)
+        prev->next = NULL;
+    else
+        *head = NULL;
 }
