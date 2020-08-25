@@ -2,8 +2,6 @@
 
 #include <stdlib.h>
 
-#include <stdbool.h>
-
 #include <math.h>
 
 #define NUMBER_OF_PROCESS 200
@@ -16,7 +14,7 @@ typedef struct P {
     int at;
 
     int sli;
-    bool flag;
+    int flag;
 
     int ct;
     int tt;
@@ -26,7 +24,7 @@ P;
 
 void scan_from_file(FILE * in , P p[]);
 void print_to_file(FILE * out, P p[]);
-bool isDone(P p[]);
+int isDone(P p[]);
 
 int main() {
     P p[NUMBER_OF_PROCESS];
@@ -46,19 +44,18 @@ int main() {
 
     int cct = 0;
     int i = 0;
-    bool done = false;
+    int done = 0;
     while (!done) {
         cct += p[i].bt;
         p[i].ct += cct;
         p[i].tt = p[i].ct - p[i].at;
         p[i].wt = p[i].tt - p[i].bt;
-        p[i].flag = true;
+        p[i].flag = 1;
 
         done = isDone(p);
         if (done) {
             break;
         }
-
         i++;
     }
 
@@ -79,7 +76,7 @@ void scan_from_file(FILE * in , P p[]) {
         p[i].at = c;
 
         p[i].sli = (int) ceil((float) p[i].bt / TIME_QUANTUM);
-        p[i].flag = false;
+        p[i].flag = 0;
 
         p[i].ct = 0;
         p[i].tt = 0;
@@ -94,17 +91,17 @@ void print_to_file(FILE * out, P p[]) {
 
     int i;
     for (i = 0; i < NUMBER_OF_PROCESS; i++) {
-        fprintf(out, "%d %d %d %d %d %d %d %s\n", p[i].id, p[i].bt, p[i].at, p[i].sli, p[i].ct, p[i].tt, p[i].wt, p[i].flag ? "true" : "false");
+        fprintf(out, "%d %d %d %d %d %d %d %d\n", p[i].id, p[i].bt, p[i].at, p[i].sli, p[i].ct, p[i].tt, p[i].wt, p[i].flag);
     }
 }
 
-bool isDone(P p[]) {
+int isDone(P p[]) {
     int i = 0;
     while (i < NUMBER_OF_PROCESS) {
-        if (p[i].flag == false) {
-            return false;
+        if (p[i].flag == 0) {
+            return 0;
         }
         i++;
     }
-    return true;
+    return 1;
 }
