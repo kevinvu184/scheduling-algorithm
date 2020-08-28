@@ -10,4 +10,4 @@ RR: RR.o
 	gcc -g -Wall -Werror -O -o RR RR.c -lm
 	
 clean:
-	rm -f FCFS RR SJF *.o *.out
+	rm -f FCFS RR SJF *.o *.out *.txt

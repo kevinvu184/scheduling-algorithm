@@ -9,35 +9,36 @@ typedef struct P
     int id;
     int bt;
     int at;
-
-    int flag;
-
+    int fl;
     int ct;
     int tt;
     int wt;
 } P;
 
 void scan_from_file(FILE *in, P p[]);
+
 void print_to_file(FILE *out, P p[]);
+
 int isDone(P p[]);
 
 int main()
 {
     P p[NUMBER_OF_PROCESS];
 
-    // Open input - output file
     FILE *in;
     if ((in = fopen("processes", "r")) == NULL)
     {
-        printf("Error - Opening p file.");
+        printf("Error - Opening processes file.");
         exit(1);
     }
+
     FILE *out;
-    if ((out = fopen("FCFS.out", "w")) == NULL)
+    if ((out = fopen("FCFS.txt", "w")) == NULL)
     {
-        printf("Error - Opening out file.");
+        printf("Error - Opening FCFS.txt file.");
         exit(1);
     }
+
     scan_from_file(in, p);
 
     int cct = 0;
@@ -49,7 +50,7 @@ int main()
         p[i].ct += cct;
         p[i].tt = p[i].ct - p[i].at;
         p[i].wt = p[i].tt - p[i].bt;
-        p[i].flag = 1;
+        p[i].fl = 1;
 
         done = isDone(p);
         if (done)
@@ -60,9 +61,11 @@ int main()
     }
 
     print_to_file(out, p);
-    // Close input - output file
+
     fclose(in);
+
     fclose(out);
+
     return 0;
 }
 
@@ -76,9 +79,7 @@ void scan_from_file(FILE *in, P p[])
         p[i].id = a;
         p[i].bt = b;
         p[i].at = c;
-
-        p[i].flag = 0;
-
+        p[i].fl = 0;
         p[i].ct = 0;
         p[i].tt = 0;
         p[i].wt = 0;
@@ -89,12 +90,12 @@ void scan_from_file(FILE *in, P p[])
 
 void print_to_file(FILE *out, P p[])
 {
-    fprintf(out, "%s %s %s %s %s %s %s\n", "I", "B", "A", "C", "T", "W", "D");
+    fprintf(out, "%5s%5s%5s%5s%5s%5s%5s\n", "I", "B", "A", "C", "T", "W", "D");
 
     int i;
     for (i = 0; i < NUMBER_OF_PROCESS; i++)
     {
-        fprintf(out, "%d %d %d %d %d %d %d\n", p[i].id, p[i].bt, p[i].at, p[i].ct, p[i].tt, p[i].wt, p[i].flag);
+        fprintf(out, "%5d%5d%5d%5d%5d%5d%5d\n", p[i].id, p[i].bt, p[i].at, p[i].ct, p[i].tt, p[i].wt, p[i].fl);
     }
 }
 
@@ -103,7 +104,7 @@ int isDone(P p[])
     int i = 0;
     while (i < NUMBER_OF_PROCESS)
     {
-        if (p[i].flag == 0)
+        if (p[i].fl == 0)
         {
             return 0;
         }
