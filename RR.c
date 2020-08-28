@@ -2,18 +2,13 @@
 
 #include <stdlib.h>
 
-#include <math.h>
-
 #define NUMBER_OF_PROCESS 200
-#define TIME_QUANTUM 2
-#define SWITCH_TIME 0.1
 
 typedef struct P
 {
     int id;
     int bt;
     int at;
-    int sl;
     int fl;
     int ct;
     int tt;
@@ -22,7 +17,7 @@ typedef struct P
 
 typedef struct node
 {
-    P p;
+    int i;
     struct node *next;
 } node;
 
@@ -32,11 +27,9 @@ void print_to_file(FILE *out, P p[]);
 
 int isDone(P p[]);
 
-int range(int cct, P p[]);
+void enqueue(node **head, int i);
 
-void enqueue(node **head, P p);
-
-P dequeue(node **head);
+int dequeue(node **head);
 
 int main()
 {
@@ -63,17 +56,18 @@ int main()
     int done = 0;
     while (!done)
     {
+        done = isDone(p);
+        if (done)
+        {
+            break;
+        }
+
         cct += p[i].bt;
         p[i].ct += cct;
         p[i].tt = p[i].ct - p[i].at;
         p[i].wt = p[i].tt - p[i].bt;
         p[i].fl = 1;
 
-        done = isDone(p);
-        if (done)
-        {
-            break;
-        }
         i++;
     }
 
@@ -96,7 +90,6 @@ void scan_from_file(FILE *in, P p[])
         p[i].id = a;
         p[i].bt = b;
         p[i].at = c;
-        p[i].sl = (int)ceil((float)p[i].bt / TIME_QUANTUM);
         p[i].fl = 0;
         p[i].ct = 0;
         p[i].tt = 0;
@@ -108,12 +101,12 @@ void scan_from_file(FILE *in, P p[])
 
 void print_to_file(FILE *out, P p[])
 {
-    fprintf(out, "%5s%5s%5s%5s%5s%5s%5s%5s\n", "I", "B", "A", "S", "C", "T", "W", "D");
+    fprintf(out, "%5s%5s%5s%5s%5s%5s%5s\n", "I", "B", "A", "C", "T", "W", "D");
 
     int i;
     for (i = 0; i < NUMBER_OF_PROCESS; i++)
     {
-        fprintf(out, "%5d%5d%5d%5d%5d%5d%5d%5d\n", p[i].id, p[i].bt, p[i].at, p[i].sl, p[i].ct, p[i].tt, p[i].wt, p[i].fl);
+        fprintf(out, "%5d%5d%5d%5d%5d%5d%5d\n", p[i].id, p[i].bt, p[i].at, p[i].ct, p[i].tt, p[i].wt, p[i].fl);
     }
 }
 
@@ -131,43 +124,33 @@ int isDone(P p[])
     return 1;
 }
 
-int range(int cct, P p[])
-{
-    int j = 0;
-    while (cct > p[j].at)
-    {
-        j++;
-    }
-    return j - 1;
-}
-
-void enqueue(node **head, P p)
+void enqueue(node **head, int i)
 {
     node *new = malloc(sizeof(node));
     if (!new)
         return;
-    new->p = p;
+    new->i = i;
     new->next = *head;
     *head = new;
 }
 
-P dequeue(node **head)
+int dequeue(node **head)
 {
-    node *current, *prev = NULL;
-    P p = {-1, -1, -1, -1, -1, -1, -1, -1};
+    node *now, *prev = NULL;
+    int i = -1;
     if (*head == NULL)
-        return p;
-    current = *head;
-    while (current->next != NULL)
+        return -1;
+    now = *head;
+    while (now->next != NULL)
     {
-        prev = current;
-        current = current->next;
+        prev = now;
+        now = now->next;
     }
-    p = current->p;
-    free(current);
+    i = now->i;
+    free(now);
     if (prev)
         prev->next = NULL;
     else
         *head = NULL;
-    return p;
+    return i;
 }

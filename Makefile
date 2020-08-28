@@ -7,7 +7,7 @@ SJF: SJF.o
 	gcc -g -Wall -Werror -O -o SJF SJF.c
 
 RR: RR.o
-	gcc -g -Wall -Werror -O -o RR RR.c -lm
+	gcc -g -O -o RR RR.c -lm
 	
 clean:
 	rm -f FCFS RR SJF *.o *.out *.txt

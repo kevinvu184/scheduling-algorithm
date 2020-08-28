@@ -48,22 +48,21 @@ int main()
     int done = 0;
     while (!done)
     {
-        cct += p[i].bt;
-        p[i].ct += cct;
-        p[i].tt = p[i].ct - p[i].at;
-        p[i].wt = p[i].tt - p[i].bt;
-        p[i].fl = 1;
-
         done = isDone(p);
         if (done)
         {
             break;
         }
 
+        cct += p[i].bt;
+        p[i].ct += cct;
+        p[i].tt = p[i].ct - p[i].at;
+        p[i].wt = p[i].tt - p[i].bt;
+        p[i].fl = 1;
+
         int end = range(cct, p);
         int min = 9999;
         int j = 0;
-
         while (j < end)
         {
             if (p[j].bt < min && p[j].fl == 0)
