@@ -3,12 +3,15 @@
 #include <stdlib.h>
 
 #define NUMBER_OF_PROCESS 200
+#define QUANTUM 2
+#define SWITCH 0.1
 
 typedef struct P
 {
     int id;
     int bt;
     int at;
+    int sl;
     int fl;
     int ct;
     int tt;
@@ -51,25 +54,22 @@ int main()
 
     scan_from_file(in, p);
 
-    int cct = 0;
-    int i = 0;
-    int done = 0;
-    while (!done)
-    {
-        done = isDone(p);
-        if (done)
-        {
-            break;
-        }
-
-        cct += p[i].bt;
-        p[i].ct += cct;
-        p[i].tt = p[i].ct - p[i].at;
-        p[i].wt = p[i].tt - p[i].bt;
-        p[i].fl = 1;
-
-        i++;
-    }
+    // int cct = 0;
+    // int cqt = QUANTUM;
+    // int i = 0;
+    // int done = 0;
+    // node *head = NULL;
+    // enqueue(&head, i);
+    // while (!done)
+    // {
+    //     done = isDone(p);
+    //     if (done)
+    //     {
+    //         break;
+    //     }
+        
+    //     i = dequeue(&head);
+    // }
 
     print_to_file(out, p);
 
@@ -90,6 +90,7 @@ void scan_from_file(FILE *in, P p[])
         p[i].id = a;
         p[i].bt = b;
         p[i].at = c;
+        p[i].sl = (b % QUANTUM != 0) ? b / QUANTUM + 1 : b / QUANTUM;
         p[i].fl = 0;
         p[i].ct = 0;
         p[i].tt = 0;
@@ -101,12 +102,12 @@ void scan_from_file(FILE *in, P p[])
 
 void print_to_file(FILE *out, P p[])
 {
-    fprintf(out, "%5s%5s%5s%5s%5s%5s%5s\n", "I", "B", "A", "C", "T", "W", "D");
+    fprintf(out, "%5s%5s%5s%5s%5s%5s%5s%5s\n", "I", "B", "A", "S", "C", "T", "W", "D");
 
     int i;
     for (i = 0; i < NUMBER_OF_PROCESS; i++)
     {
-        fprintf(out, "%5d%5d%5d%5d%5d%5d%5d\n", p[i].id, p[i].bt, p[i].at, p[i].ct, p[i].tt, p[i].wt, p[i].fl);
+        fprintf(out, "%5d%5d%5d%5d%5d%5d%5d%5d\n", p[i].id, p[i].bt, p[i].at, p[i].sl, p[i].ct, p[i].tt, p[i].wt, p[i].fl);
     }
 }
 
