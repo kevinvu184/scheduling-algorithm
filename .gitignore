@@ -4,3 +4,4 @@ RR
 *.o
 .nfs*
 *.out
+*.txt
