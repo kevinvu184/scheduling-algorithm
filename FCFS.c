@@ -181,12 +181,22 @@ void fcfs(P p[])
     enqueue(&ready, i);
     while (!is_done(p))
     {
+        i = dequeue(&ready);
+
         cct += p[i].bt;
         p[i].ct += cct;
         p[i].tt = p[i].ct - p[i].at;
         p[i].wt = p[i].tt - p[i].bt;
         p[i].fl = 1;
 
-        i++;
+        int last = available_processes(cct, p), j = 0;
+        while (j < last)
+        {
+            if (i != j && p[j].fl == 0)
+            {
+                enqueue(&ready, j);
+            }
+            j++;
+        }
     }
 }
