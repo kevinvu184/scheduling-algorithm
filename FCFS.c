@@ -15,18 +15,32 @@ typedef struct P
     // Flag indicate is done or not
     int fl;
     // Completion time
-    int ct;
+    float ct;
     // Turn around time
-    int tt;
+    float tt;
     // Waiting time
-    int wt;
+    float wt;
 } P;
+
+typedef struct node
+{
+    int i;
+    struct node *next;
+} node;
 
 void scan_from_file(FILE *in, P p[]);
 
 void print_to_file(FILE *out, P p[]);
 
 int is_done(P p[]);
+
+int available_processes(int cct, P p[]);
+
+void enqueue(node **head, int i);
+
+int dequeue(node **head);
+
+void fcfs(P p[]);
 
 int main()
 {
@@ -49,18 +63,7 @@ int main()
 
     scan_from_file(in, p);
 
-    // Current Completion Time, Iterator, Done Flag
-    int cct = 0, i = 0;
-    while (!is_done(p))
-    {
-        cct += p[i].bt;
-        p[i].ct += cct;
-        p[i].tt = p[i].ct - p[i].at;
-        p[i].wt = p[i].tt - p[i].bt;
-        p[i].fl = 1;
-
-        i++;
-    }
+    fcfs(p);
 
     print_to_file(out, p);
 
@@ -89,11 +92,11 @@ void scan_from_file(FILE *in, P p[])
 
 void print_to_file(FILE *out, P p[])
 {
-    fprintf(out, "%5s%5s%5s%5s%5s%5s\n", "I", "B", "A", "C", "T", "W");
+    fprintf(out, "%7s%7s%7s%7s%7s%7s\n", "I", "B", "A", "C", "T", "W");
     int i = 0;
     while (i < NUMBER_OF_PROCESS)
     {
-        fprintf(out, "%5d%5d%5d%5d%5d%5d\n", i, p[i].bt, p[i].at, p[i].ct, p[i].tt, p[i].wt);
+        fprintf(out, "%7d%7d%7d%7.1f%7.1f%7.1f\n", i, p[i].bt, p[i].at, p[i].ct, p[i].tt, p[i].wt);
         i++;
     }
 }
@@ -110,4 +113,80 @@ int is_done(P p[])
         i++;
     }
     return 1;
+}
+
+int available_processes(int cct, P p[])
+{
+    int i = 0;
+    while (cct >= p[i].at && i < NUMBER_OF_PROCESS)
+    {
+        i++;
+    }
+    return i;
+}
+
+void enqueue(node **head, int i)
+{
+    node *new = malloc(sizeof(node));
+    if (!new)
+        return;
+
+    if (*head != NULL)
+    {
+        node *curr = *head;
+        if (curr->i == i)
+            return;
+        else
+            while (curr->next != NULL)
+            {
+                curr = curr->next;
+                if (curr->i == i)
+                    return;
+            }
+    }
+
+    new->i = i;
+    new->next = *head;
+    *head = new;
+}
+
+int dequeue(node **head)
+{
+    node *curr, *prev = NULL;
+    int i = -1;
+    if (*head == NULL)
+        return -1;
+    curr = *head;
+    while (curr->next != NULL)
+    {
+        prev = curr;
+        curr = curr->next;
+    }
+    i = curr->i;
+    free(curr);
+    if (prev)
+        prev->next = NULL;
+    else
+        *head = NULL;
+    return i;
+}
+
+void fcfs(P p[])
+{
+    // Current Completion Time, Iterator, Done Flag
+    float cct = 0;
+    int i = 0;
+    // the queue containing the processes
+    node *ready = NULL;
+    enqueue(&ready, i);
+    while (!is_done(p))
+    {
+        cct += p[i].bt;
+        p[i].ct += cct;
+        p[i].tt = p[i].ct - p[i].at;
+        p[i].wt = p[i].tt - p[i].bt;
+        p[i].fl = 1;
+
+        i++;
+    }
 }
