@@ -15,11 +15,11 @@ typedef struct P
     // Flag indicate is done or not
     int fl;
     // Completion time
-    int ct;
+    float ct;
     // Turn around time
-    int tt;
+    float tt;
     // Waiting time
-    int wt;
+    float wt;
 } P;
 
 void scan_from_file(FILE *in, P p[]);
@@ -29,6 +29,8 @@ void print_to_file(FILE *out, P p[]);
 int is_done(P p[]);
 
 int available_processes(int cct, P p[]);
+
+void sjf(P p[]);
 
 int main()
 {
@@ -51,28 +53,7 @@ int main()
 
     scan_from_file(in, p);
 
-    // Current Completion Time, Iterator, Done Flag
-    int cct = 0, i = 0;
-    while (!is_done(p))
-    {
-        cct += p[i].bt;
-        p[i].ct += cct;
-        p[i].tt = p[i].ct - p[i].at;
-        p[i].wt = p[i].tt - p[i].bt;
-        p[i].fl = 1;
-
-        // Last index, largest initial min, iterator
-        int last = available_processes(cct, p), min = 9999, j = 0;
-        while (j < last)
-        {
-            if (p[j].bt < min && p[j].fl == 0)
-            {
-                min = p[j].bt;
-                i = j;
-            }
-            j++;
-        }
-    }
+    sjf(p);
 
     print_to_file(out, p);
 
@@ -101,11 +82,11 @@ void scan_from_file(FILE *in, P p[])
 
 void print_to_file(FILE *out, P p[])
 {
-    fprintf(out, "%5s%5s%5s%5s%5s%5s\n", "I", "B", "A", "C", "T", "W");
+    fprintf(out, "%7s%7s%7s%7s%7s%7s\n", "I", "B", "A", "C", "T", "W");
     int i = 0;
     while (i < NUMBER_OF_PROCESS)
     {
-        fprintf(out, "%5d%5d%5d%5d%5d%5d\n", i, p[i].bt, p[i].at, p[i].ct, p[i].tt, p[i].wt);
+        fprintf(out, "%7d%7d%7d%7.1f%7.1f%7.1f\n", i, p[i].bt, p[i].at, p[i].ct, p[i].tt, p[i].wt);
         i++;
     }
 }
@@ -132,4 +113,31 @@ int available_processes(int cct, P p[])
         i++;
     }
     return i;
+}
+
+void sjf(P p[])
+{
+    // Current Completion Time, Iterator, Done Flag
+    float cct = 0;
+    int i = 0;
+    while (!is_done(p))
+    {
+        cct += p[i].bt;
+        p[i].ct += cct;
+        p[i].tt = p[i].ct - p[i].at;
+        p[i].wt = p[i].tt - p[i].bt;
+        p[i].fl = 1;
+
+        // Last index, largest initial min, iterator
+        int last = available_processes(cct, p), min = 9999, j = 0;
+        while (j < last)
+        {
+            if (p[j].bt < min && p[j].fl == 0)
+            {
+                min = p[j].bt;
+                i = j;
+            }
+            j++;
+        }
+    }
 }
