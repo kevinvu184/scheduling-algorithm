@@ -2,8 +2,10 @@
 
 #include <stdlib.h>
 
+// Change this equal to the no of process in the input file.
 #define NUMBER_OF_PROCESS 200
 
+// A process struct
 typedef struct P
 {
     // Burst Time
@@ -24,15 +26,15 @@ void scan_from_file(FILE *in, P p[]);
 
 void print_to_file(FILE *out, P p[]);
 
-int isDone(P p[]);
+int is_done(P p[]);
 
 int main()
 {
     P p[NUMBER_OF_PROCESS];
 
     FILE *in;
-    // if ((in = fopen("processes", "r")) == NULL)
     if ((in = fopen("processes", "r")) == NULL)
+    // if ((in = fopen("./unit_test/FCFS02.test", "r")) == NULL)
     {
         printf("Error - Opening processes file.");
         exit(1);
@@ -47,19 +49,18 @@ int main()
 
     scan_from_file(in, p);
 
-    int cct = 0;
-    int i = 0;
-    int done = 0;
-    while (!done)
+    // Current Completion Time, Iterator, Done Flag
+    int cct = 0, i = 0;
+    // Infinite loop that is only end if all the process are processed
+    for(;;)
     {
-        cct += p[i].bt;
+        cct += (p[i].at > cct) ? p[i].bt + (p[i].at - cct) : p[i].bt;
         p[i].ct += cct;
         p[i].tt = p[i].ct - p[i].at;
         p[i].wt = p[i].tt - p[i].bt;
         p[i].fl = 1;
 
-        done = isDone(p);
-        if (done)
+        if (is_done(p))
         {
             break;
         }
@@ -103,7 +104,7 @@ void print_to_file(FILE *out, P p[])
     }
 }
 
-int isDone(P p[])
+int is_done(P p[])
 {
     int i = 0;
     while (i < NUMBER_OF_PROCESS)
