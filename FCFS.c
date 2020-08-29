@@ -41,7 +41,7 @@ int main()
     }
 
     FILE *out;
-    if ((out = fopen("FCFS.txt", "w")) == NULL)
+    if ((out = fopen("FCFS.txt", "w+")) == NULL)
     {
         printf("Error - Opening FCFS.txt file.");
         exit(1);
@@ -51,7 +51,6 @@ int main()
 
     // Current Completion Time, Iterator, Done Flag
     int cct = 0, i = 0;
-    // Infinite loop that is only end if all the process are processed
     while (!is_done(p))
     {
         cct += (p[i].at > cct) ? p[i].bt + (p[i].at - cct) : p[i].bt;
