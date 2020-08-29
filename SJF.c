@@ -35,7 +35,7 @@ int main()
     P p[NUMBER_OF_PROCESS];
 
     FILE *in;
-    if ((in = fopen("processes", "r")) == NULL)
+    if ((in = fopen("processes", "r+")) == NULL)
     // if ((in = fopen("./unit_test/SJF02.test", "r")) == NULL)
     {
         printf("Error - Opening processes file.");
@@ -55,7 +55,7 @@ int main()
     int cct = 0, i = 0;
     while (!is_done(p))
     {
-        cct += (p[i].at > cct) ? p[i].bt + (p[i].at - cct) : p[i].bt;
+        cct += p[i].bt;
         p[i].ct += cct;
         p[i].tt = p[i].ct - p[i].at;
         p[i].wt = p[i].tt - p[i].bt;
@@ -127,7 +127,7 @@ int is_done(P p[])
 int available_processes(int cct, P p[])
 {
     int i = 0;
-    while (cct >= p[i].at)
+    while (cct >= p[i].at && i < NUMBER_OF_PROCESS)
     {
         i++;
     }
