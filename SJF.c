@@ -22,6 +22,12 @@ typedef struct P
     float wt;
 } P;
 
+typedef struct node
+{
+    int i;
+    struct node *next;
+} node;
+
 void scan_from_file(FILE *in, P p[]);
 
 void print_to_file(FILE *out, P p[]);
@@ -29,6 +35,12 @@ void print_to_file(FILE *out, P p[]);
 int is_done(P p[]);
 
 int available_processes(int cct, P p[]);
+
+void enqueue(node **head, int i);
+
+int dequeue(node **head);
+
+int shortest_bt(int cct, P p[]);
 
 void sjf(P p[]);
 
@@ -38,7 +50,6 @@ int main()
 
     FILE *in;
     if ((in = fopen("processes", "r+")) == NULL)
-    // if ((in = fopen("./unit_test/SJF02.test", "r")) == NULL)
     {
         printf("Error - Opening processes file.");
         exit(1);
@@ -115,27 +126,98 @@ int available_processes(int cct, P p[])
     return i;
 }
 
+void enqueue(node **head, int i)
+{
+    node *new = malloc(sizeof(node));
+    if (!new)
+        return;
+
+    if (*head != NULL)
+    {
+        node *curr = *head;
+        if (curr->i == i)
+            return;
+        else
+            while (curr->next != NULL)
+            {
+                curr = curr->next;
+                if (curr->i == i)
+                    return;
+            }
+    }
+
+    new->i = i;
+    new->next = *head;
+    *head = new;
+}
+
+int dequeue(node **head)
+{
+    node *curr, *prev = NULL;
+    int i = -1;
+    if (*head == NULL)
+        return -1;
+    curr = *head;
+    while (curr->next != NULL)
+    {
+        prev = curr;
+        curr = curr->next;
+    }
+    i = curr->i;
+    free(curr);
+    if (prev)
+        prev->next = NULL;
+    else
+        *head = NULL;
+    return i;
+}
+
+int shortest_bt(int cct, P p[])
+{
+    // Last index, largest initial min, iterator
+    int last = available_processes(cct, p), min = 9999, i = 0;
+    while (i < last)
+    {
+        if (p[i].bt < min && p[i].fl == 0)
+        {
+            min = p[i].bt;
+        }
+        i++;
+    }
+    return min;
+}
+
 void sjf(P p[])
 {
     // Current Completion Time, Iterator, Done Flag
     float cct = 0;
     int i = 0;
+    // the queue containing the processes
+    node *ready = NULL;
+    enqueue(&ready, i);
     while (!is_done(p))
     {
-        cct += p[i].bt;
-        p[i].ct += cct;
-        p[i].tt = p[i].ct - p[i].at;
-        p[i].wt = p[i].tt - p[i].bt;
-        p[i].fl = 1;
+        i = dequeue(&ready);
+        if (i != -1)
+        {
+            cct += p[i].bt;
+            p[i].ct += cct;
+            p[i].tt = p[i].ct - p[i].at;
+            p[i].wt = p[i].tt - p[i].bt;
+            p[i].fl = 1;
+        }
+        else
+        {
+            cct++;
+        }
 
-        // Last index, largest initial min, iterator
-        int last = available_processes(cct, p), min = 9999, j = 0;
+        int min = shortest_bt(cct, p);
+        int last = available_processes(cct, p), j = 0;
         while (j < last)
         {
-            if (p[j].bt < min && p[j].fl == 0)
+            if (i != j && p[j].fl == 0 && p[j].bt == min)
             {
-                min = p[j].bt;
-                i = j;
+                enqueue(&ready, j);
             }
             j++;
         }
