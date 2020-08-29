@@ -48,7 +48,6 @@ int main()
 
     FILE *in;
     if ((in = fopen("processes", "r+")) == NULL)
-    // if ((in = fopen("./unit_test/FCFS02.test", "r")) == NULL)
     {
         printf("Error - Opening processes file.");
         exit(1);
@@ -182,12 +181,18 @@ void fcfs(P p[])
     while (!is_done(p))
     {
         i = dequeue(&ready);
-
-        cct += p[i].bt;
-        p[i].ct += cct;
-        p[i].tt = p[i].ct - p[i].at;
-        p[i].wt = p[i].tt - p[i].bt;
-        p[i].fl = 1;
+        if (i != -1)
+        {
+            cct += p[i].bt;
+            p[i].ct += cct;
+            p[i].tt = p[i].ct - p[i].at;
+            p[i].wt = p[i].tt - p[i].bt;
+            p[i].fl = 1;
+        }
+        else
+        {
+            cct++;
+        }
 
         int last = available_processes(cct, p), j = 0;
         while (j < last)
