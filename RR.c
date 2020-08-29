@@ -7,8 +7,8 @@
 #define QUANTUM 2
 #define SWITCH 0.1
 
-#define CUSTOM_FILE if ((in = fopen("processes", "r+")) == NULL)
-// #define CUSTOM_FILE if ((in = fopen("./unit_test/01.test", "r+")) == NULL)
+#define CUSTOM_FILE "processes"
+// #define CUSTOM_FILE "./unit_test/01.test"
 
 // A process struct
 typedef struct P
@@ -54,7 +54,7 @@ int main()
     P p[NUMBER_OF_PROCESS];
 
     FILE *in;
-    CUSTOM_FILE
+    if ((in = fopen(CUSTOM_FILE, "r+")) == NULL)
     {
         printf("Error - Opening processes file.");
         exit(1);

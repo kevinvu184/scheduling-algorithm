@@ -5,8 +5,8 @@
 // Change this equal to the no of process in the input file.
 #define NUMBER_OF_PROCESS 200
 
-#define CUSTOM_FILE if ((in = fopen("processes", "r+")) == NULL)
-// #define CUSTOM_FILE if ((in = fopen("./unit_test/01.test", "r+")) == NULL)
+#define CUSTOM_FILE "processes"
+// #define CUSTOM_FILE "./unit_test/01.test"
 
 // A process struct
 typedef struct P
@@ -50,7 +50,7 @@ int main()
     P p[NUMBER_OF_PROCESS];
 
     FILE *in;
-    CUSTOM_FILE
+    if ((in = fopen(CUSTOM_FILE, "r+")) == NULL)
     {
         printf("Error - Opening processes file.");
         exit(1);
