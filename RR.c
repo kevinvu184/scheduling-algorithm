@@ -19,11 +19,11 @@ typedef struct P
     // Flag indicate is done or not
     int fl;
     // Completion time
-    int ct;
+    float ct;
     // Turn around time
-    int tt;
+    float tt;
     // Waiting time
-    int wt;
+    float wt;
 } P;
 
 typedef struct node
@@ -66,7 +66,8 @@ int main()
     scan_from_file(in, p);
 
     // Current Completion Time, Iterator, Done Flag
-    int cct = 0, i = 0;
+    float cct = 0;
+    int i = 0;
     node *ready = NULL;
     enqueue(&ready, i);
     while (!is_done(p))
@@ -75,7 +76,7 @@ int main()
 
         if (p[i].re > QUANTUM)
         {
-            cct += QUANTUM;
+            cct += QUANTUM + SWITCH;
             p[i].re -= QUANTUM;
 
             int last = available_processes(cct, p), j = 0;
@@ -92,7 +93,7 @@ int main()
         }
         else
         {
-            cct += p[i].re;
+            cct += p[i].re + SWITCH;
             p[i].re = 0;
             p[i].ct += cct;
             p[i].tt = p[i].ct - p[i].at;
@@ -139,11 +140,11 @@ void scan_from_file(FILE *in, P p[])
 
 void print_to_file(FILE *out, P p[])
 {
-    fprintf(out, "%5s%5s%5s%5s%5s%5s\n", "I", "B", "A", "C", "T", "W");
+    fprintf(out, "%7s%7s%7s%7s%7s%7s\n", "I", "B", "A", "C", "T", "W");
     int i = 0;
     while (i < NUMBER_OF_PROCESS)
     {
-        fprintf(out, "%5d%5d%5d%5d%5d%5d\n", i, p[i].bt, p[i].at, p[i].ct, p[i].tt, p[i].wt);
+        fprintf(out, "%7d%7d%7d%7.1f%7.1f%7.1f\n", i, p[i].bt, p[i].at, p[i].ct, p[i].tt, p[i].wt);
         i++;
     }
 }
