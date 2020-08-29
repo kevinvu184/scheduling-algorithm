@@ -5,3 +5,4 @@ RR
 .nfs*
 *.out
 *.txt
+unit_test/

@@ -4,7 +4,7 @@
 
 // Change this equal to the no of process in the input file.
 #define NUMBER_OF_PROCESS 200
-#define QUANTUM 2
+#define QUANTUM 4
 #define SWITCH 0.1
 
 // A process struct
@@ -44,15 +44,13 @@ void enqueue(node **head, int i);
 
 int dequeue(node **head);
 
-void print_list(node *head);
-
 int main()
 {
     P p[NUMBER_OF_PROCESS];
 
     FILE *in;
-    if ((in = fopen("processes", "r")) == NULL)
-    // if ((in = fopen("./unit_test/FCFS02.test", "r")) == NULL)
+    if ((in = fopen("processes", "r+")) == NULL)
+    // if ((in = fopen("./unit_test/RR02.test", "r+")) == NULL)
     {
         printf("Error - Opening processes file.");
         exit(1);
@@ -66,6 +64,52 @@ int main()
     }
 
     scan_from_file(in, p);
+
+    // Current Completion Time, Iterator, Done Flag
+    int cct = 0, i = 0;
+    node *ready = NULL;
+    enqueue(&ready, i);
+    while (!is_done(p))
+    {
+        i = dequeue(&ready);
+
+        if (p[i].re > QUANTUM)
+        {
+            cct += QUANTUM;
+            p[i].re -= QUANTUM;
+
+            int last = available_processes(cct, p), j = 0;
+            while (j < last)
+            {
+                if (i != j && p[j].fl == 0)
+                {
+                    enqueue(&ready, j);
+                }
+                j++;
+            }
+
+            enqueue(&ready, i);
+        }
+        else
+        {
+            cct += p[i].re;
+            p[i].re = 0;
+            p[i].ct += cct;
+            p[i].tt = p[i].ct - p[i].at;
+            p[i].wt = p[i].tt - p[i].bt;
+            p[i].fl = 1;
+
+            int last = available_processes(cct, p), j = 0;
+            while (j < last)
+            {
+                if (i != j && p[j].fl == 0)
+                {
+                    enqueue(&ready, j);
+                }
+                j++;
+            }
+        }
+    }
 
     print_to_file(out, p);
 
@@ -121,7 +165,7 @@ int is_done(P p[])
 int available_processes(int cct, P p[])
 {
     int i = 0;
-    while (cct >= p[i].at)
+    while (cct >= p[i].at && i < NUMBER_OF_PROCESS)
     {
         i++;
     }
@@ -172,15 +216,4 @@ int dequeue(node **head)
     else
         *head = NULL;
     return i;
-}
-
-void print_list(node *head)
-{
-    node *curr = head;
-    while (curr != NULL)
-    {
-        printf("%d ", curr->i);
-        curr = curr->next;
-    }
-    printf("\n");
 }
