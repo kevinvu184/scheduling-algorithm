@@ -61,8 +61,9 @@ int main()
         p[i].wt = p[i].tt - p[i].bt;
         p[i].fl = 1;
 
-        int end = available_processes(cct, p), min = 9999, j = 0;
-        while (j < end)
+        // Last index, largest initial min, iterator
+        int last = available_processes(cct, p), min = 9999, j = 0;
+        while (j < last)
         {
             if (p[j].bt < min && p[j].fl == 0)
             {
