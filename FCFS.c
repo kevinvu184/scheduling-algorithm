@@ -52,7 +52,7 @@ int main()
     // Current Completion Time, Iterator, Done Flag
     int cct = 0, i = 0;
     // Infinite loop that is only end if all the process are processed
-    for(;;)
+    for (;;)
     {
         cct += (p[i].at > cct) ? p[i].bt + (p[i].at - cct) : p[i].bt;
         p[i].ct += cct;
