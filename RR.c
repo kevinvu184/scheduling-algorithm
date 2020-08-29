@@ -4,7 +4,7 @@
 
 // Change this equal to the no of process in the input file.
 #define NUMBER_OF_PROCESS 200
-#define QUANTUM 4
+#define QUANTUM 2
 #define SWITCH 0.1
 
 // A process struct
@@ -52,7 +52,7 @@ int main()
 
     FILE *in;
     if ((in = fopen("processes", "r+")) == NULL)
-    // if ((in = fopen("./unit_test/RR02.test", "r+")) == NULL)
+    // if ((in = fopen("./unit_test/01.test", "r+")) == NULL)
     {
         printf("Error - Opening processes file.");
         exit(1);

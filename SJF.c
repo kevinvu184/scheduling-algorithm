@@ -50,6 +50,7 @@ int main()
 
     FILE *in;
     if ((in = fopen("processes", "r+")) == NULL)
+    // if ((in = fopen("./unit_test/01.test", "r+")) == NULL)
     {
         printf("Error - Opening processes file.");
         exit(1);
