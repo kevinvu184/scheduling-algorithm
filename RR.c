@@ -44,6 +44,8 @@ void enqueue(node **head, int i);
 
 int dequeue(node **head);
 
+void rr(P p[]);
+
 int main()
 {
     P p[NUMBER_OF_PROCESS];
@@ -65,52 +67,7 @@ int main()
 
     scan_from_file(in, p);
 
-    // Current Completion Time, Iterator, Done Flag
-    float cct = 0;
-    int i = 0;
-    node *ready = NULL;
-    enqueue(&ready, i);
-    while (!is_done(p))
-    {
-        i = dequeue(&ready);
-
-        if (p[i].re > QUANTUM)
-        {
-            cct += QUANTUM + SWITCH;
-            p[i].re -= QUANTUM;
-
-            int last = available_processes(cct, p), j = 0;
-            while (j < last)
-            {
-                if (i != j && p[j].fl == 0)
-                {
-                    enqueue(&ready, j);
-                }
-                j++;
-            }
-
-            enqueue(&ready, i);
-        }
-        else
-        {
-            cct += p[i].re + SWITCH;
-            p[i].re = 0;
-            p[i].ct += cct;
-            p[i].tt = p[i].ct - p[i].at;
-            p[i].wt = p[i].tt - p[i].bt;
-            p[i].fl = 1;
-
-            int last = available_processes(cct, p), j = 0;
-            while (j < last)
-            {
-                if (i != j && p[j].fl == 0)
-                {
-                    enqueue(&ready, j);
-                }
-                j++;
-            }
-        }
-    }
+    rr(p);
 
     print_to_file(out, p);
 
@@ -217,4 +174,55 @@ int dequeue(node **head)
     else
         *head = NULL;
     return i;
+}
+
+void rr(P p[])
+{
+    // Current Completion Time, Iterator, Done Flag
+    float cct = 0;
+    int i = 0;
+    // the queue containing the processes
+    node *ready = NULL;
+    enqueue(&ready, i);
+    while (!is_done(p))
+    {
+        i = dequeue(&ready);
+
+        if (p[i].re > QUANTUM)
+        {
+            cct += QUANTUM + SWITCH;
+            p[i].re -= QUANTUM;
+
+            int last = available_processes(cct, p), j = 0;
+            while (j < last)
+            {
+                if (i != j && p[j].fl == 0)
+                {
+                    enqueue(&ready, j);
+                }
+                j++;
+            }
+
+            enqueue(&ready, i);
+        }
+        else
+        {
+            cct += p[i].re + SWITCH;
+            p[i].re = 0;
+            p[i].ct += cct;
+            p[i].tt = p[i].ct - p[i].at;
+            p[i].wt = p[i].tt - p[i].bt;
+            p[i].fl = 1;
+
+            int last = available_processes(cct, p), j = 0;
+            while (j < last)
+            {
+                if (i != j && p[j].fl == 0)
+                {
+                    enqueue(&ready, j);
+                }
+                j++;
+            }
+        }
+    }
 }
