@@ -1,0 +1,36 @@
+Linux Completely Fair Scheduling
+
+All algorithm as one
+1. To Compile: 
+   - make
+2. To Execute: 
+   - make exe
+
+Each algorithm separately
+1. To Compile: 
+   - make FCFS
+   - make SJF
+   - make RR
+2. To Execute:
+   - ./FCFS
+   - ./SFJ
+   - ./RR
+
+Additional command
+- To Execute with Valgrind:
+  - make valgrind
+- To Clean Up: 
+  - make clean
+
+Program output
+- FCFS -> FCFS.txt
+- SJF -> SJF.txt
+- RR -> RR.txt
+
+Content: A table with 6 columns
+- I: Process Iterator (start from 0 != PID) (For looping purpose)
+- B: Burst Time
+- A: Arrival Time
+- C: Completion Time
+- T: Turn Around Time
+- W: Waiting Time

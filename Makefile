@@ -9,7 +9,7 @@ SJF: SJF.o
 RR: RR.o
 	gcc -g -Wall -Werror -O -o RR RR.c
 
-run:
+exe:
 	./FCFS
 	./SJF
 	./RR
