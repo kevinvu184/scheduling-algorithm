@@ -6,3 +6,4 @@ RR
 *.out
 *.txt
 unit_test/
+.ipynb_checkpoints/

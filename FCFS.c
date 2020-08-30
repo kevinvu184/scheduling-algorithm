@@ -6,7 +6,7 @@
 #define NUMBER_OF_PROCESS 200
 
 #define CUSTOM_FILE "processes"
-// #define CUSTOM_FILE "./unit_test/01.test"
+// #define CUSTOM_FILE "./unit_test/07.test"
 
 // A process struct
 typedef struct P
