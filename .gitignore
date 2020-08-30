@@ -4,6 +4,5 @@ RR
 *.o
 .nfs*
 *.out
-*.txt
 unit_test/
 .ipynb_checkpoints/
