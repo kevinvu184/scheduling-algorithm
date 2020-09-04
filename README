@@ -1,5 +1,7 @@
 Linux Completely Fair Scheduling
 
+> The input process file must be named: "processes", and placed in the same folder as the C program.
+
 All algorithm as one
 1. To Compile: 
    - make
