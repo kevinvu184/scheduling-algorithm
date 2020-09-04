@@ -2,11 +2,8 @@
 
 #include <stdlib.h>
 
-// Change this equal to the no of process in the input file.
+// Change this equal to the number of process in the input file.
 #define NUMBER_OF_PROCESS 200
-
-#define CUSTOM_FILE "processes"
-// #define CUSTOM_FILE "./unit_test/07.test"
 
 // A process struct
 typedef struct P
@@ -24,25 +21,17 @@ typedef struct P
     // Waiting time
     float wt;
 } P;
-
 typedef struct node
 {
     int i;
     struct node *next;
 } node;
-
 void scan_from_file(FILE *in, P p[]);
-
 void print_to_file(FILE *out, P p[]);
-
 int is_done(P p[]);
-
 int available_processes(int cct, P p[]);
-
 void enqueue(node **head, int i);
-
 int dequeue(node **head);
-
 void fcfs(P p[]);
 
 int main()
@@ -50,30 +39,69 @@ int main()
     P p[NUMBER_OF_PROCESS];
 
     FILE *in;
-    if ((in = fopen(CUSTOM_FILE, "r+")) == NULL)
+    if ((in = fopen("processes", "r+")) == NULL)
     {
         printf("Error - Opening processes file.");
         exit(1);
     }
-
     FILE *out;
     if ((out = fopen("FCFS.txt", "w+")) == NULL)
     {
         printf("Error - Opening FCFS.txt file.");
         exit(1);
     }
-
     scan_from_file(in, p);
 
     fcfs(p);
 
     print_to_file(out, p);
-
     fclose(in);
-
     fclose(out);
 
     return 0;
+}
+
+void fcfs(P p[])
+{
+    // Current Completion Time, Iterator
+    float cct = 0;
+    int i = 0;
+    // The queue containing the processes
+    node *ready = NULL;
+    enqueue(&ready, i);
+
+    // Loop until all done-flag is 1 (done)
+    while (!is_done(p))
+    {
+        i = dequeue(&ready);
+        // If there is exist a process in the current completion time that is not processed
+        // Process it.
+        // Otherwise, add 1 second to the current completion time.
+        if (i != -1)
+        {
+            cct += p[i].bt;
+            p[i].ct += cct;
+            p[i].tt = p[i].ct - p[i].at;
+            p[i].wt = p[i].tt - p[i].bt;
+            p[i].fl = 1;
+        }
+        else
+        {
+            cct += 1;
+        }
+
+        // Check all processes whether there is a new available process with the current completion time
+        // To add to the queue
+        int last = available_processes(cct, p), j = 0;
+        while (j < last)
+        {
+            if (i != j && p[j].fl == 0)
+            {
+                enqueue(&ready, j);
+            }
+            j++;
+        }
+    }
 }
 
 void scan_from_file(FILE *in, P p[])
@@ -171,40 +199,4 @@ int dequeue(node **head)
     else
         *head = NULL;
     return i;
-}
-
-void fcfs(P p[])
-{
-    // Current Completion Time, Iterator, Done Flag
-    float cct = 0;
-    int i = 0;
-    // the queue containing the processes
-    node *ready = NULL;
-    enqueue(&ready, i);
-    while (!is_done(p))
-    {
-        i = dequeue(&ready);
-        if (i != -1)
-        {
-            cct += p[i].bt;
-            p[i].ct += cct;
-            p[i].tt = p[i].ct - p[i].at;
-            p[i].wt = p[i].tt - p[i].bt;
-            p[i].fl = 1;
-        }
-        else
-        {
-            cct++;
-        }
-
-        int last = available_processes(cct, p), j = 0;
-        while (j < last)
-        {
-            if (i != j && p[j].fl == 0)
-            {
-                enqueue(&ready, j);
-            }
-            j++;
-        }
-    }
 }
