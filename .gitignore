@@ -7,3 +7,4 @@ RR
 *.txt
 unit_test/
 .ipynb_checkpoints/
+priorityqueue.c

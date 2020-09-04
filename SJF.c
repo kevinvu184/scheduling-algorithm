@@ -66,9 +66,11 @@ void sjf(P p[])
     // Current Completion Time, Iterator, Done Flag
     float cct = 0;
     int i = 0;
-    // the queue containing the processes
+    // the priority queue containing the processes
     node *ready = NULL;
     enqueue(&ready, i);
+
+    // Loop until all done-flag is 1 (done)
     while (!is_done(p))
     {
         i = dequeue(&ready);
