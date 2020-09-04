@@ -135,46 +135,70 @@ int available_processes(int cct, P p[])
 void enqueue(node **head, int i)
 {
     node *new = malloc(sizeof(node));
+    
     if (!new)
+    {
         return;
+    }
 
     if (*head != NULL)
     {
         node *curr = *head;
+
         if (curr->i == i)
+        {
             return;
+        }
         else
+        {
             while (curr->next != NULL)
             {
                 curr = curr->next;
                 if (curr->i == i)
                     return;
             }
+        }
     }
 
     new->i = i;
+
     new->next = *head;
+
     *head = new;
 }
 
 int dequeue(node **head)
 {
     node *curr, *prev = NULL;
+
     int i = -1;
+
     if (*head == NULL)
+    {
         return -1;
+    }
+
     curr = *head;
+
     while (curr->next != NULL)
     {
         prev = curr;
         curr = curr->next;
     }
+
     i = curr->i;
+
     free(curr);
+
     if (prev)
+    {
         prev->next = NULL;
+    }
     else
+    {
         *head = NULL;
+    }
+
     return i;
 }
 
