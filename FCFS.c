@@ -1,5 +1,4 @@
 #include <stdio.h>
-
 #include <stdlib.h>
 
 // Change this equal to the number of process in the input file.
@@ -26,13 +25,13 @@ typedef struct node
     int i;
     struct node *next;
 } node;
+void fcfs(P p[]);
 void scan_from_file(FILE *in, P p[]);
 void print_to_file(FILE *out, P p[]);
 int is_done(P p[]);
 int available_processes(int cct, P p[]);
 void enqueue(node **head, int i);
 int dequeue(node **head);
-void fcfs(P p[]);
 
 int main()
 {
