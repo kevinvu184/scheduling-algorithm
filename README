@@ -36,3 +36,8 @@ Content: A table with 6 columns
 - C: Completion Time
 - T: Turn Around Time
 - W: Waiting Time
+
+Main Scheduling Algorithm:
+- FCFS: in method fcfs() in FCFS.c
+- SJF: in method sjf() in SJF.c
+- RR: in method rr() in RR.c
