@@ -3,6 +3,8 @@
 
 // Change this equal to the number of process in the input file.
 #define NUMBER_OF_PROCESS 200
+// Change this to the input file name
+#define IN_FILE "processes"
 
 // A process struct
 typedef struct P
@@ -20,26 +22,18 @@ typedef struct P
     // Waiting time
     float wt;
 } P;
-typedef struct node
-{
-    int i;
-    struct node *next;
-} node;
 void sjf(P p[]);
 void scan_from_file(FILE *in, P p[]);
 void print_to_file(FILE *out, P p[]);
 int is_done(P p[]);
 int available_processes(int cct, P p[]);
-void enqueue(node **head, int i);
-int dequeue(node **head);
-int shortest_bt(int cct, P p[]);
 
 int main()
 {
     P p[NUMBER_OF_PROCESS];
 
     FILE *in;
-    if ((in = fopen("processes", "r+")) == NULL)
+    if ((in = fopen(IN_FILE, "r+")) == NULL)
     {
         printf("Error - Opening processes file.");
         exit(1);
@@ -52,6 +46,7 @@ int main()
     }
     scan_from_file(in, p);
 
+    // Main Shortest Job First Logic
     sjf(p);
 
     print_to_file(out, p);
@@ -66,34 +61,40 @@ void sjf(P p[])
     // Current Completion Time, Iterator, Done Flag
     float cct = 0;
     int i = 0;
-    // the priority queue containing the processes
-    node *ready = NULL;
-    enqueue(&ready, i);
+    int is_new_process = 1;
 
     // Loop until all done-flag is 1 (done)
     while (!is_done(p))
     {
-        i = dequeue(&ready);
-        if (i != -1)
+        // If there is an exist process in the current completion time frame that is not processed
+        // Process it.
+        // Otherwise, add 1 second to the current completion time.
+        if (is_new_process)
         {
             cct += p[i].bt;
             p[i].ct += cct;
             p[i].tt = p[i].ct - p[i].at;
             p[i].wt = p[i].tt - p[i].bt;
             p[i].fl = 1;
+            is_new_process = 0;
         }
         else
         {
             cct++;
         }
 
-        int min = shortest_bt(cct, p);
-        int last = available_processes(cct, p), j = 0;
-        while (j < last)
+        // Check whether there is a new available process with the current completion time frame
+        // To add to the queue
+        int available_i = available_processes(cct, p);
+        int j = 0;
+        int min = 9999;
+        while (j < available_i)
         {
-            if (i != j && p[j].fl == 0 && p[j].bt == min)
+            if (i != j && p[j].bt < min && p[j].fl == 0)
             {
-                enqueue(&ready, j);
+                min = p[j].bt;
+                i = j;
+                is_new_process = 1;
             }
             j++;
         }
@@ -130,108 +131,29 @@ void print_to_file(FILE *out, P p[])
 int is_done(P p[])
 {
     int i = 0;
+    int is_done = 1;
     while (i < NUMBER_OF_PROCESS)
     {
         if (p[i].fl == 0)
         {
-            return 0;
+            is_done = 0;
+            break;
         }
         i++;
     }
-    return 1;
+    return is_done;
 }
 
 int available_processes(int cct, P p[])
 {
     int i = 0;
-    while (cct >= p[i].at && i < NUMBER_OF_PROCESS)
+    while (i < NUMBER_OF_PROCESS)
     {
-        i++;
-    }
-    return i;
-}
-
-void enqueue(node **head, int i)
-{
-    node *new = malloc(sizeof(node));
-    
-    if (!new)
-    {
-        return;
-    }
-
-    if (*head != NULL)
-    {
-        node *curr = *head;
-
-        if (curr->i == i)
+        if (cct < p[i].at)
         {
-            return;
-        }
-        else
-        {
-            while (curr->next != NULL)
-            {
-                curr = curr->next;
-                if (curr->i == i)
-                    return;
-            }
-        }
-    }
-
-    new->i = i;
-
-    new->next = *head;
-
-    *head = new;
-}
-
-int dequeue(node **head)
-{
-    node *curr, *prev = NULL;
-
-    int i = -1;
-
-    if (*head == NULL)
-    {
-        return -1;
-    }
-
-    curr = *head;
-
-    while (curr->next != NULL)
-    {
-        prev = curr;
-        curr = curr->next;
-    }
-
-    i = curr->i;
-
-    free(curr);
-
-    if (prev)
-    {
-        prev->next = NULL;
-    }
-    else
-    {
-        *head = NULL;
-    }
-
-    return i;
-}
-
-int shortest_bt(int cct, P p[])
-{
-    // Last index, largest initial min, iterator
-    int last = available_processes(cct, p), min = 9999, i = 0;
-    while (i < last)
-    {
-        if (p[i].bt < min && p[i].fl == 0)
-        {
-            min = p[i].bt;
+            break;
         }
         i++;
     }
-    return min;
+    return i;
 }

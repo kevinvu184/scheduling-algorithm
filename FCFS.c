@@ -3,7 +3,8 @@
 
 // Change this equal to the number of process in the input file.
 #define NUMBER_OF_PROCESS 200
-
+// Change this to the input file name
+#define IN_FILE "processes"
 // A process struct
 typedef struct P
 {
@@ -20,11 +21,13 @@ typedef struct P
     // Waiting time
     float wt;
 } P;
+// Queue node
 typedef struct node
 {
     int i;
     struct node *next;
 } node;
+// Method prototype
 void fcfs(P p[]);
 void scan_from_file(FILE *in, P p[]);
 void print_to_file(FILE *out, P p[]);
@@ -38,7 +41,7 @@ int main()
     P p[NUMBER_OF_PROCESS];
 
     FILE *in;
-    if ((in = fopen("processes", "r+")) == NULL)
+    if ((in = fopen(IN_FILE, "r+")) == NULL)
     {
         printf("Error - Opening processes file.");
         exit(1);
@@ -51,6 +54,7 @@ int main()
     }
     scan_from_file(in, p);
 
+    // Main First Come First Serve Logic
     fcfs(p);
 
     print_to_file(out, p);
@@ -65,6 +69,7 @@ void fcfs(P p[])
     // Current Completion Time, Iterator
     float cct = 0;
     int i = 0;
+
     // The queue containing the processes
     node *ready = NULL;
     enqueue(&ready, i);
@@ -73,7 +78,8 @@ void fcfs(P p[])
     while (!is_done(p))
     {
         i = dequeue(&ready);
-        // If there is exist a process in the current completion time that is not processed
+
+        // If there is an exist process in the current completion time frame that is not processed
         // Process it.
         // Otherwise, add 1 second to the current completion time.
         if (i != -1)
@@ -89,12 +95,13 @@ void fcfs(P p[])
             cct += 1;
         }
 
-        // Check all processes whether there is a new available process with the current completion time
+        // Check whether there is a new available process with the current completion time frame
         // To add to the queue
-        int last = available_processes(cct, p), j = 0;
-        while (j < last)
+        int available_i = available_processes(cct, p);
+        int j = 0;
+        while (j < available_i)
         {
-            if (i != j && p[j].fl == 0)
+            if (p[j].fl == 0)
             {
                 enqueue(&ready, j);
             }
@@ -103,6 +110,7 @@ void fcfs(P p[])
     }
 }
 
+// Helper methods
 void scan_from_file(FILE *in, P p[])
 {
     int a, b, c;
@@ -133,22 +141,28 @@ void print_to_file(FILE *out, P p[])
 int is_done(P p[])
 {
     int i = 0;
+    int is_done = 1;
     while (i < NUMBER_OF_PROCESS)
     {
         if (p[i].fl == 0)
         {
-            return 0;
+            is_done = 0;
+            break;
         }
         i++;
     }
-    return 1;
+    return is_done;
 }
 
 int available_processes(int cct, P p[])
 {
     int i = 0;
-    while (cct >= p[i].at && i < NUMBER_OF_PROCESS)
+    while (i < NUMBER_OF_PROCESS)
     {
+        if (cct < p[i].at)
+        {
+            break;
+        }
         i++;
     }
     return i;
@@ -157,7 +171,7 @@ int available_processes(int cct, P p[])
 void enqueue(node **head, int i)
 {
     node *new = malloc(sizeof(node));
-    
+
     if (!new)
     {
         return;
